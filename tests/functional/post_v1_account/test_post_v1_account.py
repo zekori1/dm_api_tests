@@ -1,9 +1,13 @@
+import pprint
+from json import loads
+
 import requests
+
 
 def test_post_v1_account():
     # Регистрация пользователя
 
-    login = 'ivan_kochetkov_3'
+    login = 'ivan_kochetkov_8'
     password = 'ivan_kochetkov_123'
     email = f'{login}@mail.ru'
 
@@ -17,6 +21,7 @@ def test_post_v1_account():
 
     print(response.status_code)
     print(response.text)
+    assert response.status_code == 201, f"Пользователь не был создан {response.json()}"
 
     # Получить письма из почтового сервера
 
@@ -28,22 +33,27 @@ def test_post_v1_account():
 
     print(response.status_code)
     print(response.text)
+    assert response.status_code == 200, "Письма не были получены"
 
     # Получить активационный токен
-
-    ...
-
+    token = None
+    for item in response.json()['items']:
+        user_data = loads(item['Content']['Body'])
+        user_login = user_data['Login']
+        if user_login == login:
+            token = user_data['ConfirmationLinkUrl'].split('/')[-1]
+    assert token is not None, f"Токен для пользователя {login} не был получен"
     # Активация токена
 
     headers = {
         'accept': 'text/plain',
     }
 
-    response = requests.put('http://5.63.153.31:5051/v1/account/34ade58a-3ee6-4143-b7a0-763d2d4ba860', headers=headers)
+    response = requests.put(f'http://5.63.153.31:5051/v1/account/{token}', headers=headers)
 
     print(response.status_code)
     print(response.text)
-
+    assert response.status_code == 200, "Пользователь не был активирован"
     # Авторизоваться
 
     json_data = {
@@ -56,3 +66,4 @@ def test_post_v1_account():
 
     print(response.status_code)
     print(response.text)
+    assert response.status_code == 200, "Пользователь не смог авторизоваться"

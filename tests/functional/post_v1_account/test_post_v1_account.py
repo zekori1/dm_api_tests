@@ -5,10 +5,8 @@ from dm_api_account.apis.login_api import LoginApi
 from api_mailhog.apis.mailhog_api import MailhogApi
 from faker import Faker
 
-
 fake = Faker('ru_RU')
 phone_number = fake.msisdn()
-
 
 def test_post_v1_account():
     # Регистрация пользователя

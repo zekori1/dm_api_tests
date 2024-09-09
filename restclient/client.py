@@ -4,7 +4,7 @@ from requests import (
 )
 import structlog
 import uuid
-
+import curlify
 
 
 
@@ -44,7 +44,8 @@ class Restclient:
         )
 
         rest_response = self.session.request(method=method, url=full_url, **kwargs)
-
+        curl = curlify.to_curl(rest_response.request)
+        print(curl)
         log.msg(
             event='Response',
             status_code=rest_response.status_code,

@@ -5,6 +5,7 @@ from dm_api_account.apis.login_api import LoginApi
 from api_mailhog.apis.mailhog_api import MailhogApi
 from faker import Faker
 
+
 import structlog
 
 fake = Faker('ru_RU')
